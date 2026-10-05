@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sanctuary — Proactive AI Companion & CBT Voice Confidant</title>
+  <meta name="description" content="A soothing sage-green emotional companion & virtual pet powered by real Gemma LLM & ElevenLabs that proactively cares for you while you work." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body class="theme-sage-light">
+  <!-- Soft Ambient Botanical Glow Canvas -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Particle Layer for Zzz / Hearts / Sparkles -->
+  <div id="pet-particle-container" class="pet-particles-layer"></div>
+
+  <div class="app-layout">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="brand-avatar" id="header-avatar" title="Pet Mochi!">
+          <div class="pet-ears">
+            <span class="ear ear-left"></span>
+            <span class="ear ear-right"></span>
+          </div>
+          <div class="pet-face-mini">
+            <span class="eye-dot header-eye"></span>
+            <span class="eye-dot header-eye"></span>
+          </div>
+        </div>
+        <div>
+          <div class="brand-title">
+            Sanctuary 
+            <span class="badge-tag" id="llm-model-badge">Real Gemma LLM • ElevenLabs</span>
+          </div>
+          <div class="brand-subtitle">Living CBT Companion & Roommate Pet • 100% Private</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Behavioral State Pill -->
+        <div class="behavior-badge" id="current-behavior-badge" title="Current Pet Behavioral State (Oneko State Engine)">
+          <span class="behavior-icon" id="behavior-icon">🐾</span>
+          <span id="behavior-name">State: Cozy Loaf</span>
+        </div>
+
+        <!-- Proactive Pet Watch Toggle -->
+        <div class="proactive-toggle-badge" id="proactive-toggle-btn" title="Toggle Proactive Roommate Watch Mode">
+          <span class="pulse-indicator active"></span>
+          <span class="watch-text">Pet Watch: <strong>Active (Assertive)</strong></span>
+        </div>
+
+        <!-- Ambient Soundscape Selector -->
+        <div class="soundscape-control">
+          <button id="soundscape-btn" class="icon-btn" title="Toggle Nature Ambience">
+            <svg class="sound-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+            <span id="soundscape-name">Gentle Rain</span>
+          </button>
+          <select id="soundscape-select" class="sound-select" aria-label="Select Ambient Soundscape">
+            <option value="none">Mute Ambience</option>
+            <option value="rain" selected>🌧️ Gentle Rain</option>
+            <option value="waves">🌊 Calming Waves</option>
+            <option value="forest">🌲 Forest Breeze</option>
+            <option value="binaural">🧘 432Hz Zen Drone</option>
+          </select>
+        </div>
+
+        <!-- Floating Mochi Screen Companion Toggle -->
+        <button id="toggle-floating-btn" class="gemma-status-badge active" title="Toggle Persistent Floating Screen Companion">
+          <span>🐾 Floating: ON</span>
+        </button>
+
+        <!-- Document Picture-in-Picture Popout -->
+        <button id="popout-pip-btn" class="gemma-status-badge" title="Pop out Mochi into an always-on-top Picture-in-Picture window">
+          <span>🪟 Pop out</span>
+        </button>
+
+        <!-- Real Gemma Brain Status Indicator -->
+        <button id="gemma-status-badge" class="gemma-status-badge" title="Click to view Gemma Cognitive Diagnostics & Model Tests">
+          <span class="brain-status-dot active" id="gemma-status-dot"></span>
+          <span id="gemma-status-text">Brain: Gemma WebGPU</span>
+        </button>
+
+        <!-- Settings Modal Trigger -->
+        <button id="settings-trigger-btn" class="settings-icon-btn" title="Real Gemma LLM & ElevenLabs Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- WebGPU LLM Model Loading Progress Banner -->
+    <div id="llm-load-progress-bar" class="llm-progress-banner" style="display: none;">
+      <div class="llm-progress-info">
+        <span class="spinner-icon">⏳</span>
+        <span id="llm-load-status-text">Loading Gemma-2B WebGPU weights into browser cache...</span>
+        <span id="llm-load-pct" class="pct-badge">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="llm-progress-fill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Top Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-tab active" data-tab="companion-space" role="tab">
+        <span>🐾 Roommate Pet & Voice Sanctuary</span>
+      </button>
+      <button class="nav-tab" data-tab="cbt-reframer" role="tab">
+        <span>🌿 Thought Reframer (CBT)</span>
+      </button>
+      <button class="nav-tab" data-tab="breathing-space" role="tab">
+        <span>🫁 4-7-8 Breathing & Grounding</span>
+      </button>
+      <button class="nav-tab" data-tab="emotional-vault" role="tab">
+        <span>📔 Private Emotional Vault</span>
+      </button>
+      <button class="nav-tab" data-tab="friend-story" role="tab">
+        <span>💌 Why I Built This For My Friend</span>
+      </button>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-container">
+
+      <!-- ================= SECTION 1: PROACTIVE PET COMPANION & VOICE SANCTUARY ================= -->
+      <section id="section-companion-space" class="tab-content active">
+        <div class="companion-layout">
+          
+          <!-- Left: The Proactive Live Companion Stage -->
+          <div class="companion-hero-card">
+            
+            <div class="pet-status-bar">
+              <div class="pet-mood-badge" id="pet-mood-badge">
+                <span class="mood-dot"></span>
+                <span id="pet-mood-text">Mood: Cozy & Watching Over You</span>
+              </div>
+              
+              <div class="pet-behavior-controls">
+                <button class="behavior-pill-btn" id="trigger-random-behavior-btn" title="Trigger a random open-source pet behavior (Sleep, Zoomies, Gift, Chase)">
+                  🎲 Trigger Random Pet Action
+                </button>
+                <div class="proactive-clock" id="proactive-clock">
+                  <span>Next check-in: </span><strong id="next-checkin-timer">35s</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- The Big Interactive Voice & Pet Orb -->
+            <div class="pet-orb-stage">
+              <div class="orb-outer-ring" id="orb-outer-ring"></div>
+              
+              <!-- Pet Ears atop the Orb -->
+              <div class="orb-cat-ears">
+                <div class="cat-ear ear-l" id="cat-ear-left"></div>
+                <div class="cat-ear ear-r" id="cat-ear-right"></div>
+              </div>
+
+              <div class="pet-orb-core" id="main-voice-orb" title="Click to scratch Mochi's ears or speak!">
+                <canvas id="orb-visualizer-canvas" width="320" height="320"></canvas>
+                
+                <!-- Animated Expressive Pet Eyes with Pupil Tracking -->
+                <div class="pet-face" id="pet-face">
+                  <div class="pet-eye eye-left"><div class="pupil" id="pupil-left"></div></div>
+                  <div class="pet-eye eye-right"><div class="pupil" id="pupil-right"></div></div>
+                  <div class="pet-mouth" id="pet-mouth"></div>
+                </div>
+
+                <!-- Live Voice Pulse Ring -->
+                <div class="voice-ripple" id="voice-ripple"></div>
+              </div>
+            </div>
+
+            <!-- Pet Name & Proactive Speech Bubble -->
+            <div class="pet-speech-wrapper">
+              <div class="pet-identity">
+                <h3>Mochi 🐾</h3>
+                <span class="pet-sublabel">Your Proactive On-Screen Roommate & Confidant (Real Gemma 2B + ElevenLabs)</span>
+              </div>
+              
+              <div class="live-speech-bubble" id="live-speech-bubble">
+                <p id="live-speech-text">"Hey! I'm sitting right here beside your workspace. Drop your shoulders, take a gentle sip of water, and let me know whenever anything feels heavy."</p>
+                <div class="bubble-tail"></div>
+              </div>
+
+              <!-- Interactive Pet Care & Play Actions -->
+              <div class="pet-quick-actions">
+                <button class="action-pill" id="pet-scratch-head-btn">💕 Scratch Mochi's Ears</button>
+                <button class="action-pill" id="pet-feed-fish-btn">🐟 Feed Fish Treat</button>
+                <button class="action-pill" id="pet-stretch-btn">🐱 Cat Stretch Together</button>
+                <button class="action-pill" id="pet-purr-btn">🎵 25Hz Purr Ambience</button>
+                <button class="action-pill" id="pet-posture-btn">🧘 Somatic Jaw Check</button>
+              </div>
+            </div>
+
+            <!-- Live Audio Spectrum Strip -->
+            <div class="audio-spectrum-container">
+              <canvas id="spectrum-canvas" width="550" height="32"></canvas>
+            </div>
+
+            <!-- Voice & Text Input Dock -->
+            <div class="dock-container">
+              <button id="mic-toggle-btn" class="mic-btn" title="Hold or Click to Speak">
+                <div class="mic-ripple"></div>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" y1="19" x2="12" y2="23"/>
+                  <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+                <span id="mic-btn-label">Speak to Mochi</span>
+              </button>
+
+              <div class="text-input-wrapper">
+                <input type="text" id="voice-text-input" placeholder="Or type your thoughts to Mochi..." aria-label="Type message" />
+                <button id="send-thought-btn" class="send-btn" title="Send to Gemma AI">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- ElevenLabs Voice Switch -->
+              <button id="voice-sound-toggle" class="voice-sound-btn active" title="Toggle Spoken ElevenLabs Voice">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <span id="voice-audio-status">Voice: ON</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Right: Conversation Feed & Empathy Prompts -->
+          <div class="companion-sidebar">
+            <div class="sidebar-card">
+              <div class="sidebar-header">
+                <h4>💬 Emotional Exchange Feed</h4>
+                <span class="live-indicator">Real Gemma LLM Inference</span>
+              </div>
+              
+              <div class="transcript-box" id="transcript-display">
+                <div class="welcome-card">
+                  <div class="welcome-icon">🌱</div>
+                  <p><strong>100% Private On-Device Sanctuary</strong></p>
+                  <small>Powered by Google's open-weight Gemma LLM + ElevenLabs. Mochi listens, reasons with real neural weights, and speaks like a comforting roommate.</small>
+                  <div class="quick-llm-action-bar" style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="action-pill" onclick="window.initWebLLMEngine()" style="background: rgba(99, 102, 241, 0.2); border-color: rgba(99, 102, 241, 0.5); font-weight: 600; color: #c7d2fe;">⚡ Load Gemma 2B WebGPU (RTX 3060)</button>
+                    <button class="action-pill" onclick="window.runGemmaDiagnostics()" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #a7f3d0;">🩺 Run Diagnostics</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Express Chips -->
+              <div class="quick-prompts-label">Tap to express:</div>
+              <div class="prompt-chips-grid">
+                <button class="prompt-chip" data-prompt="I'm feeling so overwhelmed with my deadlines right now.">🌪️ "Overwhelmed with deadlines"</button>
+                <button class="prompt-chip" data-prompt="I feel like I'm falling behind and disappointing everyone.">📉 "Imposter syndrome & guilt"</button>
+                <button class="prompt-chip" data-prompt="My chest feels tight and my heart is beating fast.">⚡ "Late-night anxiety panic"</button>
+                <button class="prompt-chip" data-prompt="Can you remind me of something comforting and ground me?">🤍 "Need grounding words"</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= SECTION 2: CBT THOUGHT REFRAMER ================= -->
+      <section id="section-cbt-reframer" class="tab-content">
+        <div class="cbt-container">
+          <div class="cbt-intro-banner">
+            <h2>🌿 Cognitive Thought Unwinder & Distortion Reframer</h2>
+            <p>Our minds often catastrophize when we are tired or stressed. Feed your automatic negative thought into the reframer, and let <strong>Google's Gemma open-source LLM</strong> dynamically untangle the facts from the fear.</p>
+          </div>
+
+          <div class="cbt-grid">
+            <!-- Left: Automatic Thought Input -->
+            <div class="cbt-panel input-panel">
+              <div class="panel-header">
+                <h3>1. Automatic Thought / Inner Critic</h3>
+                <span class="step-badge">Step 1</span>
+              </div>
+              <p class="panel-sub">Write what your inner critic is telling you right now:</p>
+              
+              <textarea id="cbt-input-text" class="cbt-textarea" placeholder="e.g., 'If I make one mistake in tomorrow's presentation, everyone will think I'm totally incompetent and I will fail.'"></textarea>
+              
+              <div class="distortion-checklist">
+                <div class="checklist-title">Cognitive Distortion Trap (Auto-detected by Gemma):</div>
+                <div class="distortion-tags" id="distortion-tags-container">
+                  <span class="distortion-tag" data-distortion="catastrophizing">🌪️ Catastrophizing</span>
+                  <span class="distortion-tag" data-distortion="all_or_nothing">⚖️ All-or-Nothing</span>
+                  <span class="distortion-tag" data-distortion="mind_reading">🔮 Mind Reading</span>
+                  <span class="distortion-tag" data-distortion="should_statements">📜 'Should' Rules</span>
+                  <span class="distortion-tag" data-distortion="emotional_reasoning">💔 Emotional Reasoning</span>
+                </div>
+              </div>
+
+              <div class="panel-actions">
+                <button id="run-cbt-reframe-btn" class="primary-sage-btn">
+                  <span>Deconstruct & Reframe with Gemma LLM</span>
+                </button>
+                <button id="cbt-example-btn" class="ghost-sage-btn">Load Example</button>
+              </div>
+            </div>
+
+            <!-- Right: 3D Reframe Perspectives -->
+            <div class="cbt-panel output-panel" id="cbt-output-panel">
+              <div class="panel-header">
+                <h3>2. Compassionate Truth & Reframes</h3>
+                <span class="step-badge">Step 2</span>
+              </div>
+
+              <div id="cbt-empty-state" class="cbt-empty-box">
+                <div class="empty-leaf">🌿</div>
+                <h4>Your cognitive reframing cards will appear here.</h4>
+                <p>Click "Deconstruct & Reframe" to identify the distortion, see objective evidence, and get an actionable grounding next step generated by Gemma.</p>
+              </div>
+
+              <div id="cbt-results-box" class="cbt-results-box" style="display: none;">
+                <div class="distortion-alert" id="cbt-distortion-alert">
+                  <span class="alert-icon">🔍</span>
+                  <div>
+                    <strong id="cbt-distortion-title">Identified Trap: Catastrophizing</strong>
+                    <p id="cbt-distortion-desc">Assuming the absolute worst-case outcome is guaranteed to happen.</p>
+                  </div>
+                </div>
+
+                <div class="reframe-cards-stack">
+                  <div class="reframe-card card-compassion">
+                    <div class="card-badge">💛 Compassionate Friend Perspective</div>
+                    <p id="reframe-text-1">"If your dearest friend told you this, you would never judge them. You'd remind them of how capable and resilient they truly are."</p>
+                  </div>
+
+                  <div class="reframe-card card-evidence">
+                    <div class="card-badge">⚖️ Objective Reality & Logic Check</div>
+                    <p id="reframe-text-2">"Fear is an emotional state, not a factual forecast. One stumble does not erase your accumulated expertise."</p>
+                  </div>
+
+                  <div class="reframe-card card-action">
+                    <div class="card-badge">🎯 Micro-Action for Relief (Right Now)</div>
+                    <p id="reframe-text-3">"Drink a warm glass of water, write down just the single first sentence, and let the rest wait until tomorrow morning."</p>
+                  </div>
+                </div>
+
+                <button id="save-cbt-to-vault-btn" class="save-vault-btn">
+                  <span>💾 Save this Reframe into my Private Vault</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION 3: 4-7-8 BREATHING & GROUNDING ================= -->
+      <section id="section-breathing-space" class="tab-content">
+        <div class="breathing-container">
+          <div class="grounding-subtabs">
+            <button class="subtab-btn active" data-subtab="breathing">🫁 4-7-8 & Box Breathing</button>
+            <button class="subtab-btn" data-subtab="sensory">🖐️ 5-4-3-2-1 Sensory Grounding</button>
+            <button class="subtab-btn" data-subtab="crisis">🛡️ Immediate Panic & Crisis Helpline</button>
+          </div>
+
+          <!-- Breathing Subtab -->
+          <div id="subtab-breathing" class="subcontent active">
+            <div class="breathing-stage">
+              <div class="pattern-selector">
+                <button class="pattern-pill active" data-pattern="478">4-7-8 Deep Parasympathetic (4s In • 7s Hold • 8s Out)</button>
+                <button class="pattern-pill" data-pattern="box">Box Breathing Focus (4s In • 4s Hold • 4s Out • 4s Hold)</button>
+                <button class="pattern-pill" data-pattern="sigh">Physiological Sigh (Double Inhale • Long Exhale)</button>
+              </div>
+
+              <div class="breathing-orb-wrapper">
+                <div class="breath-aura-glow" id="breath-aura"></div>
+                <div class="breath-bubble" id="breath-bubble">
+                  <span class="breath-phrase" id="breath-phrase">Click Start to Begin</span>
+                  <span class="breath-count" id="breath-count">0s</span>
+                </div>
+              </div>
+
+              <div class="breath-actions">
+                <button id="start-breath-btn" class="primary-sage-btn">Start Breathing Guide</button>
+                <button id="stop-breath-btn" class="ghost-sage-btn" style="display:none;">Pause</button>
+              </div>
+              <p class="breath-hint">💡 <em>Deep 4-7-8 exhalations stimulate the vagus nerve, rapidly slowing heart rate and lowering cortisol levels within 90 seconds.</em></p>
+            </div>
+          </div>
+
+          <!-- Sensory Grounding Subtab -->
+          <div id="subtab-sensory" class="subcontent">
+            <div class="sensory-card">
+              <h3>5-4-3-2-1 Sensory Grounding Technique</h3>
+              <p>Re-anchor your nervous system by naming details in your physical room:</p>
+
+              <div class="sensory-items">
+                <div class="sensory-row">
+                  <div class="num-badge">5</div>
+                  <div class="sensory-field">
+                    <label><strong>👁️ 5 things you can SEE:</strong></label>
+                    <input type="text" class="sensory-input" placeholder="e.g., Warm desk lamp, green plant, white coffee cup..." />
+                  </div>
+                </div>
+
+                <div class="sensory-row">
+                  <div class="num-badge">4</div>
+                  <div class="sensory-field">
+                    <label><strong>✋ 4 things you can physically TOUCH:</strong></label>
+                    <input type="text" class="sensory-input" placeholder="e.g., Texture of my sweater, cool desktop, feet flat on floor..." />
+                  </div>
+                </div>
+
+                <div class="sensory-row">
+                  <div class="num-badge">3</div>
+                  <div class="sensory-field">
+                    <label><strong>👂 3 things you can HEAR:</strong></label>
+                    <input type="text" class="sensory-input" placeholder="e.g., Distant rain, computer fan humming, soft breath..." />
+                  </div>
+                </div>
+
+                <div class="sensory-row">
+                  <div class="num-badge">2</div>
+                  <div class="sensory-field">
+                    <label><strong>👃 2 things you can SMELL:</strong></label>
+                    <input type="text" class="sensory-input" placeholder="e.g., Herbal tea, fresh evening air..." />
+                  </div>
+                </div>
+
+                <div class="sensory-row">
+                  <div class="num-badge">1</div>
+                  <div class="sensory-field">
+                    <label><strong>👅 1 thing you are GRATEFUL for:</strong></label>
+                    <input type="text" class="sensory-input" placeholder="e.g., My warm bed waiting for me tonight..." />
+                  </div>
+                </div>
+              </div>
+
+              <button id="sensory-complete-btn" class="primary-sage-btn">I Am Anchored & Safe</button>
+            </div>
+          </div>
+
+          <!-- Crisis Subtab -->
+          <div id="subtab-crisis" class="subcontent">
+            <div class="crisis-box">
+              <div class="crisis-badge">❤️ Compassionate Support Hub</div>
+              <h3>Immediate Crisis Support & 24/7 Helplines</h3>
+              <p>Sanctuary is a caring self-reflection pet and CBT confidant, but human support is irreplaceable during acute distress.</p>
+              
+              <div class="crisis-grid">
+                <div class="helpline-card">
+                  <h4>📞 US / Canada: 988 Lifeline</h4>
+                  <p>Call or text <strong>988</strong> (Free, 24/7, confidential).</p>
+                </div>
+                <div class="helpline-card">
+                  <h4>💬 Crisis Text Line</h4>
+                  <p>Text <strong>HOME</strong> to <strong>741741</strong> to message with a crisis counselor.</p>
+                </div>
+                <div class="helpline-card">
+                  <h4>🇬🇧 UK: Samaritans & Shout</h4>
+                  <p>Call <strong>116 123</strong> or text <strong>SHOUT</strong> to <strong>85258</strong>.</p>
+                </div>
+                <div class="helpline-card">
+                  <h4>🌍 International Helplines</h4>
+                  <p>Visit <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> for support in 130+ countries.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= SECTION 4: PRIVATE EMOTIONAL VAULT ================= -->
+      <section id="section-emotional-vault" class="tab-content">
+        <div class="vault-container">
+          <div class="vault-header">
+            <div>
+              <h2>📔 Private Emotional Vault</h2>
+              <p>Stored 100% locally in your browser storage. Zero tracking. Zero telemetry.</p>
+            </div>
+            <div class="vault-actions">
+              <button id="export-vault-btn" class="ghost-sage-btn">📥 Export Markdown Journal</button>
+              <button id="clear-vault-btn" class="danger-sage-btn">🗑️ Clear Vault</button>
+            </div>
+          </div>
+
+          <div class="vault-metrics">
+            <div class="metric-card">
+              <span class="metric-val" id="stat-sessions-count">0</span>
+              <span class="metric-name">Reflections Saved</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-val" id="stat-reframes-count">0</span>
+              <span class="metric-name">CBT Reframes</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-val" id="stat-breaths-count">0m</span>
+              <span class="metric-name">Breathing Minutes</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-val">100%</span>
+              <span class="metric-name">On-Device Privacy</span>
+            </div>
+          </div>
+
+          <div class="vault-entries-list" id="vault-entries-list">
+            <div class="empty-vault-card">
+              <p>Your saved reflections, voice journal conversations, and CBT reframes will be securely listed here.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION 5: DEV WRITEUP & FRIEND STORY ================= -->
+      <section id="section-friend-story" class="tab-content">
+        <div class="story-article-card">
+          <div class="story-top">
+            <span class="story-tag">Hacktoberfest 2026 • Build for a Friend Entry</span>
+            <h1>Why I Built Sanctuary for My Friend Alex</h1>
+            <p class="story-byline">A proactive companion for late-night anxiety, burnout, and quiet battles.</p>
+          </div>
+
+          <div class="story-content">
+            <h3>The Story: Why Alex Needed an Assertive, Private Roommate Companion</h3>
+            <p>A few months ago, my close friend Alex was going through intense burnout and late-night insomnia. Every night around 2:00 AM, spiral thinking would take over — catastrophic thoughts about work, imposter syndrome, and racing anxiety.</p>
+            
+            <p>Alex wanted an interactive companion to talk through these thoughts and practice Cognitive Behavioral Therapy (CBT). But Alex <strong>refused to use closed cloud AI tools</strong>. Why? Because Alex didn't want their most vulnerable, painful breakdowns uploaded to third-party corporate servers or used for model training.</p>
+
+            <div class="story-quote">
+              <p>"I want to talk to someone when I panic at 3 AM, but I can't stomach the thought of my private breakdowns sitting on an ad-tech server."</p>
+              <span>— Alex</span>
+            </div>
+
+            <p>Furthermore, Alex noticed that when anxiety hits hardest, <em>you often don't have the energy to type out a prompt</em>. You need a gentle companion that is <strong>proactively already there</strong> — like an open-source desktop pet (inspired by classic Neko and virtual screenmates) sitting quietly beside you, blinking, tracking your cursor, reminding you to unclench your jaw, and offering comforting spoken words with ElevenLabs.</p>
+
+            <h3>Why Open Innovation Was The Only Ethical Solution</h3>
+            <ul class="open-points-list">
+              <li><strong>Zero-Knowledge Privacy:</strong> By running open-weight models like <strong>Google's Gemma (Gemma-2-2B-IT / Gemma-2-9B-IT)</strong> on-device (via WebGPU & WebLLM), not a single word ever leaves the friend's laptop.</li>
+              <li><strong>Open Pet Behavioral State Machine:</strong> Built on open-source finite state machine mechanics with cursor tracking, random loaf naps, gift-bringing, and playful micro-zoomies.</li>
+              <li><strong>Zero Cloud Costs & No Subscriptions:</strong> Mental health support shouldn't be gated behind $20/month paywalls. Open models allow anyone to run their own sanctuary forever for $0.</li>
+              <li><strong>Expressive Voice with ElevenLabs:</strong> Provides lifelike, soothing, comforting speech that sounds like a caring friend in the room.</li>
+            </ul>
+
+            <div class="dev-submission-box">
+              <h4>🚀 Ready for Hacktoberfest DEV Submission</h4>
+              <p>Copy the complete pre-filled markdown submission template ready with all tags (<code>#devchallenge</code>, <code>#weekendchallenge</code>, <code>#hf26challenge</code>, <code>#gemma</code>, <code>#elevenlabs</code>):</p>
+              <button id="copy-dev-post-btn" class="primary-sage-btn">📋 Copy Ready-to-Post DEV Markdown</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Dedicated Screen-Space Floating Companion Layer -->
+    <div id="mochi-floating-layer" class="mochi-floating-layer" aria-label="Mochi Living Companion Layer">
+      <div id="mochi-floating-pet" class="mochi-floating-pet-wrapper">
+        <div class="floating-pet-widget" id="floating-pet-ball" title="Drag me anywhere! Click to pet Mochi or hear a thought.">
+          <div class="widget-cat-ears">
+            <span class="w-ear w-ear-l" id="w-ear-l"></span>
+            <span class="w-ear w-ear-r" id="w-ear-r"></span>
+          </div>
+          <div class="widget-ball-core" id="widget-ball-core">
+            <div class="widget-eyes">
+              <span class="w-eye" id="w-eye-l"><span class="w-pupil" id="w-pupil-l"></span></span>
+              <span class="w-eye" id="w-eye-r"><span class="w-pupil" id="w-pupil-r"></span></span>
+            </div>
+            <div class="widget-mouth" id="w-mouth"></div>
+          </div>
+          <div class="widget-tooltip" id="widget-speech-tooltip">
+            <span>🐾 Mochi is loafing peacefully</span>
+          </div>
+          <!-- Live Floating Pet Speech Bubble -->
+          <div class="floating-pet-speech-bubble" id="floating-live-speech-bubble" style="display: none;">
+            <p id="floating-live-speech-text">"Hey friend!"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Random Pet Gift Modal / Banner Container -->
+    <div id="pet-gift-toast" class="pet-gift-card" style="display: none;">
+      <div class="gift-icon" id="gift-icon">🍵</div>
+      <div class="gift-body">
+        <strong id="gift-title">Mochi brought you a gift!</strong>
+        <p id="gift-desc">A fresh cup of warm chamomile tea.</p>
+      </div>
+      <button class="gift-accept-btn" id="gift-accept-btn">Thank you, Mochi 💕</button>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal" style="display: none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>⚙️ Real Gemma LLM & ElevenLabs Configuration</h3>
+          <button id="close-settings-btn" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="ai-engine-select"><strong>Open-Source LLM Execution Engine:</strong></label>
+            <select id="ai-engine-select" class="form-select">
+              <option value="webgpu-gemma" selected>🚀 Real In-Browser WebGPU Gemma (Google Gemma-2B-IT Neural Weights)</option>
+              <option value="ollama-local">🦙 Local Ollama (http://localhost:11434 with gemma2:2b)</option>
+              <option value="huggingface-gemma">🤗 Hugging Face Serverless API (Google Gemma-2-9B-It)</option>
+              <option value="openrouter-free">⚡ OpenRouter Gateway (Open-Source Gemma 2)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="webgpu-controls">
+            <label><strong>WebGPU Gemma Model Weights:</strong></label>
+            <button id="load-webgpu-btn" class="primary-sage-btn" style="width: 100%; justify-content: center;">
+              <span>📥 Initialize & Load Gemma 2B in WebGPU Cache</span>
+            </button>
+            <small id="webgpu-status-note">Runs 100% on your laptop GPU via WebLLM tensor execution. Zero data leaves your machine.</small>
+          </div>
+
+          <div class="form-group" id="api-key-group" style="display: none;">
+            <label for="custom-api-key" id="custom-api-key-label"><strong>Optional Remote Gemma Gateway Key:</strong></label>
+            <input type="password" id="custom-api-key" class="form-input" placeholder="Optional API Key for Cloud Fallback (stored locally in browser only)" />
+            <small id="api-key-note">Keys are stored solely in your local browser sandbox and never pushed to GitHub.</small>
+          </div>
+
+          <div class="form-group" id="ollama-model-group" style="display: none;">
+            <label for="ollama-model-name"><strong>Ollama Model Tag:</strong></label>
+            <input type="text" id="ollama-model-name" class="form-input" value="gemma2:2b" placeholder="e.g., gemma2:2b or gemma:2b" />
+          </div>
+
+          <div class="form-group">
+            <label for="voice-engine-select"><strong>Voice Synthesis Engine:</strong></label>
+            <select id="voice-engine-select" class="form-select">
+              <option value="elevenlabs" selected>🎙️ ElevenLabs AI Voice (Partner Category - Ultra Soothing)</option>
+              <option value="webspeech">🗣️ Device Native Speech (Web Speech API - Zero Setup)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="elevenlabs-key-group">
+            <label for="elevenlabs-api-key"><strong>ElevenLabs API Key (Claim from hacktoberfest promos):</strong></label>
+            <input type="password" id="elevenlabs-api-key" class="form-input" placeholder="Enter ElevenLabs API Key (e.g., xi-...)" />
+          </div>
+
+          <div class="form-group">
+            <label for="elevenlabs-voice-id"><strong>ElevenLabs Voice Persona:</strong></label>
+            <select id="elevenlabs-voice-id" class="form-select">
+              <option value="21m00Tcm4TlvDq8ikWAM" selected>Rachel (Calm, Warm & Empathetic)</option>
+              <option value="EXAVITQu4vr4xnSDxMaL">Sarah (Soft, Soothing & Gentle)</option>
+              <option value="IKne3meq5aSn9XLyUdCD">Charlie (Friendly, Grounding & Reassuring)</option>
+              <option value="onwK4e9ZLuTAKqWW03F9">Daniel (Deep, Patient & Serene)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="proactive-interval"><strong>Proactive Check-In Frequency:</strong></label>
+            <select id="proactive-interval" class="form-select">
+              <option value="20">Every 20 Seconds (Very Active Roommate)</option>
+              <option value="45" selected>Every 45 Seconds (Balanced Pet Companion)</option>
+              <option value="120">Every 2 Minutes (Quiet Presence)</option>
+              <option value="0">Off (Only Speak When Prompted)</option>
+            </select>
+          </div>
+
+          <!-- Phase 2: Privacy & Senses Controls -->
+          <div class="privacy-controls-box">
+            <h4 style="margin: 0 0 0.6rem 0; font-size: 0.95rem; color: #2c4435;">🔒 Privacy & Sensory Context Permissions</h4>
+            
+            <div class="privacy-toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-mochi-presence" checked />
+                <span class="toggle-slider"></span>
+              </label>
+              <div class="toggle-label-text">
+                <strong>Mochi Floating Presence</strong>
+                <small>Allows Mochi to float freely on your workspace canvas as a companion.</small>
+              </div>
+            </div>
+
+            <div class="privacy-toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-cursor-awareness" checked />
+                <span class="toggle-slider"></span>
+              </label>
+              <div class="toggle-label-text">
+                <strong>Cursor Awareness & Eye Gaze</strong>
+                <small>Enables Mochi to look toward and curiously notice your cursor proximity.</small>
+              </div>
+            </div>
+
+            <div class="privacy-toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-activity-awareness" checked />
+                <span class="toggle-slider"></span>
+              </label>
+              <div class="toggle-label-text">
+                <strong>Work Session & Idle Awareness</strong>
+                <small>Local-only idle and long-session awareness without sending logs anywhere.</small>
+              </div>
+            </div>
+
+            <div class="privacy-toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-screen-awareness" disabled />
+                <span class="toggle-slider disabled"></span>
+              </label>
+              <div class="toggle-label-text">
+                <strong>Screen / OCR Perception (OFF by Default)</strong>
+                <small style="color: #6b8273;">Strictly disabled for privacy. Zero screen captures or background recording.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="save-settings-btn" class="primary-sage-btn">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gemma Cognitive Diagnostics & Test Suite Modal -->
+    <div class="modal-overlay" id="diagnostics-modal" style="display: none;">
+      <div class="modal-card" style="max-width: 620px;">
+        <div class="modal-header">
+          <h3>🔬 Gemma Cognitive Diagnostics & Security Audit</h3>
+          <button id="close-diagnostics-btn" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="diag-header-note">
+            <p><strong>Verification Suite for Hacktoberfest Challenge</strong>: Verify that Google's open-weight Gemma model is genuinely the cognitive core of Mochi, running on-device with zero secret leakage.</p>
+          </div>
+
+          <div class="diag-tests-container">
+            <!-- Test A -->
+            <div class="diag-test-card" id="diag-card-a">
+              <div class="diag-test-header">
+                <span class="diag-pill" id="diag-badge-a">Test A</span>
+                <strong>Provider & Model Availability</strong>
+                <span class="diag-status-badge pending" id="diag-status-a">Ready</span>
+              </div>
+              <div class="diag-test-body" id="diag-body-a">
+                Checks WebGPU device support, active model weights, and local Ollama endpoint.
+              </div>
+            </div>
+
+            <!-- Test B -->
+            <div class="diag-test-card" id="diag-card-b">
+              <div class="diag-test-header">
+                <span class="diag-pill" id="diag-badge-b">Test B</span>
+                <strong>Live Gemma Inference Verification</strong>
+                <span class="diag-status-badge pending" id="diag-status-b">Ready</span>
+              </div>
+              <div class="diag-test-body" id="diag-body-b">
+                Sends test prompt: <code>"Respond with exactly: GEMMA_OK"</code> and validates neural token generation.
+              </div>
+            </div>
+
+            <!-- Test C -->
+            <div class="diag-test-card" id="diag-card-c">
+              <div class="diag-test-header">
+                <span class="diag-pill" id="diag-badge-c">Test C</span>
+                <strong>Mochi Context Integration</strong>
+                <span class="diag-status-badge pending" id="diag-status-c">Ready</span>
+              </div>
+              <div class="diag-test-body" id="diag-body-c">
+                Injects Mochi's emotional state vector (energy, happiness, socialNeed) into Gemma and validates contextual reflection.
+              </div>
+            </div>
+
+            <!-- Test D -->
+            <div class="diag-test-card" id="diag-card-d">
+              <div class="diag-test-header">
+                <span class="diag-pill" id="diag-badge-d">Test D</span>
+                <strong>Zero-Knowledge Privacy & Secrets Audit</strong>
+                <span class="diag-status-badge pending" id="diag-status-d">Ready</span>
+              </div>
+              <div class="diag-test-body" id="diag-body-d">
+                Scans memory & storage: confirms 0 hardcoded credentials, 0 telemetry tracking, and 100% local persistence.
+              </div>
+            </div>
+          </div>
+
+          <div class="diag-output-console" id="diag-console-log" style="display: none;">
+            <div class="console-label">Execution Log:</div>
+            <pre id="diag-console-text"></pre>
+          </div>
+        </div>
+        <div class="modal-footer" style="justify-content: space-between;">
+          <small id="diag-summary-note" style="color: #556c5c;">Click run to execute live verification</small>
+          <button id="run-diagnostics-btn" class="primary-sage-btn">▶ Run Full Verification Suite</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast-card" style="display: none;">
+      <span id="toast-message">Notification</span>
+    </div>
+
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
