@@ -1,102 +1,76 @@
-# Hacktoberfest — Build for a Friend: Sanctuary
-
-*Submission for the [Hacktoberfest Weekend Challenge: Build for a Friend](https://dev.to/challenges/hacktoberfest-weekend-2026-10-01)*
-
----
+*This is a submission for the [Hacktoberfest Weekend Challenge: Build for a Friend](https://dev.to/challenges/hacktoberfest-weekend-2026-10-01)*
 
 ## What I Built
 
-I built **Sanctuary** — a 100% private, on-device emotional companion and living roommate pet named **Mochi**, powered by **Google's open-weight Gemma LLM** and **ElevenLabs AI voice infrastructure**.
+I built **Sanctuary** — a 100% private, on-device living AI roommate pet and CBT emotional confidant named **Mochi**, powered by **Google's open-weight Gemma 2B LLM** and **ElevenLabs AI voice infrastructure**.
 
-Instead of being a static form or a chatbot that sends generic pop-up notifications, Mochi lives as an autonomous creature with a **continuous 20Hz local life simulation**:
-- **Living Body:** Independent movement across conceptual desk zones, stretching, loafing, and sleeping with floating Zzz particles.
-- **Sensory Awareness:** Sub-20ms trigonometric eye pupil tracking and proximity dwell detection relative to the user's cursor.
-- **Gemma Cognitive Core:** Escalates to Google Gemma on-device (via WebGPU or Ollama) for Cognitive Behavioral Therapy (CBT) distortion deconstruction (catastrophizing, all-or-nothing thinking, mind reading) into compassionate, actionable reframing.
-- **Lifelike Voice:** Speaks softly and reassuringly through ElevenLabs Flash v2.5.
-- **Somatic Calm:** Features guided 4-7-8 parasympathetic breathing synced with procedural 25Hz cat purring audio and pink-noise rain.
+I built Sanctuary for my close friend **Alex**, a software engineer who struggles with late-night burnout, insomnia, and acute 2:00 AM spiral anxiety. When anxiety hits late at night:
+1. **Privacy Roadblock:** Alex refused to use cloud-hosted commercial AI for mental health out of valid fear that vulnerable breakdowns would be logged, sold, or used to train corporate models.
+2. **Cognitive Fatigue:** When panicking, typing long prompts into an empty chatbot interface is overwhelming. Alex needed a companion that was **physically and passively present** — quietly sitting beside the workspace, noticing when work runs too long, and offering gentle grounding without being intrusive.
 
----
-
-## Who I Built It For
-
-I built Sanctuary for my close friend **Alex**, an engineer who struggles with late-night burnout, insomnia, and acute 2:00 AM spiral anxiety.
-
----
-
-## The Problem
-
-When Alex's anxiety hits at night:
-1. **Privacy Roadblocks:** Alex refused to use cloud-hosted commercial AI tools for mental health out of valid fear that vulnerable breakdowns would be logged, analyzed, or used to train corporate models.
-2. **Cognitive Fatigue:** When panicking, formulating text prompts into an empty chat box is exhausting. Alex needed an AI companion that was **proactively present** — quietly sitting beside the workspace, noticing when work runs too long, and offering gentle grounding without being intrusive.
+### Key Features:
+- 🐾 **20Hz Autonomous Life Simulation:** Mochi has a living body with hunger, energy, happiness, and curiosity dynamics. It wanders, stretches, loafs, and naps with floating Zzz particles.
+- 👁️ **Sensory Gaze & Cursor Awareness:** Sub-20ms trigonometric eye pupil tracking and proximity dwell detection relative to the user's cursor.
+- 🧠 **Google Gemma Cognitive Core:** Escalates to Gemma on-device (via WebGPU or local Ollama) for Cognitive Behavioral Therapy (CBT) distortion deconstruction (catastrophizing, all-or-nothing thinking, mind reading) into compassionate, actionable reframing.
+- 🗣️ **Lifelike Voice:** Speaks softly and reassuringly through ElevenLabs Flash v2.5 (`eleven_flash_v2_5`) with local Web Speech fallback.
+- 🪟 **Floating Screen Companion & Document PiP:** Floats over the workspace or pops out into an always-on-top Document Picture-in-Picture window.
+- 🫁 **Somatic Grounding:** Guided 4-7-8 parasympathetic breathing synced with procedural 25Hz cat purring audio and pink-noise rain.
+- 🔒 **100% Private & Zero-Knowledge:** All neural inference and reflection logs stay strictly on the user's local machine.
 
 ---
 
-## How Mochi Works
+## Demo
 
-Mochi is governed by two decoupled systems:
+- 🚀 **Live Application:** [https://sanctuary-0ib8.onrender.com/](https://sanctuary-0ib8.onrender.com/)
+
+*(Tip: In supported Chromium browsers, click the **Pop-out PiP** button in the header to detach Mochi into an always-on-top desktop companion window!)*
+
+---
+
+## Code
+
+{% github PawanTheGod/sanctuary %}
+
+- 📂 **GitHub Repository:** [https://github.com/PawanTheGod/sanctuary](https://github.com/PawanTheGod/sanctuary)
+- **Tech Stack:** Vanilla JavaScript (ES Modules), HTML5, Glassmorphic CSS3, Web Audio API, WebGPU / WebLLM (`@mlc-ai/web-llm`), Ollama API, ElevenLabs API, Document Picture-in-Picture API.
+
+---
+
+## How I Built It
+
+Sanctuary is built around a decoupled two-tier architecture:
+
 1. **Continuous 20Hz Life Simulation (`mochi-engine.js`):**
-   - Manages an evolving internal state vector: `energy`, `happiness`, `curiosity`, `boredom`, `playfulness`, `sleepiness`, and `socialNeed`.
-   - Priority hierarchy arbitrates behavior: User Touch $\rightarrow$ Active Dialogue $\rightarrow$ Attention Seeking $\rightarrow$ Playful Zoomies $\rightarrow$ Wandering $\rightarrow$ Idle Loafing $\rightarrow$ Sleep.
-2. **Sensory Context Pipeline (`context-provider.js`):**
-   - Tracks cursor velocity, dwell time, session duration, and keyboard typing focus.
+   - Runs a local physics and state loop tracking `energy`, `happiness`, `curiosity`, `boredom`, `sleepiness`, and `socialNeed`.
+   - Priority hierarchy arbitrates behaviors without invoking LLM tokens: User Touch $\rightarrow$ Active Dialogue $\rightarrow$ Attention Seeking $\rightarrow$ Playful Zoomies $\rightarrow$ Wandering $\rightarrow$ Idle Loafing $\rightarrow$ Sleep.
+2. **Sensory Context Aggregator (`context-provider.js`):**
+   - Monitors passive workspace signals (cursor velocity, dwell time, active typing vs. idle).
    - If the user is actively typing, Mochi **strictly suppresses interruptions**.
-   - Direct somatic reactions (waking up, purring, stretching) happen at zero latency without making LLM calls.
+3. **Google Gemma Open-Weight Cognitive Core (`app.js`):**
+   - When the user confides a worry or requests guidance, Mochi executes a physical pre-speech sequence (approaches, pauses, tilts head) and prompts **Google Gemma 2B** (`gemma-2-2b-it-q4f16_1-MLC` via WebLLM/WebGPU, or `gemma2:2b` via Ollama).
+   - Gemma analyzes automatic negative thoughts, identifies underlying cognitive distortions, tests evidence vs. emotional fears, and generates a compassionate friend perspective, objective factual reframe, and somatic grounding micro-step.
+4. **Emotive Voice Synthesis:**
+   - Responses stream through ElevenLabs Flash v2.5 for lifelike audio, with zero-latency Web Speech synthesis as an offline fallback.
 
 ---
 
-## How Gemma Is Used
+## Why Does Open Innovation Matter?
 
-Google's open-weight **Gemma** serves as Mochi's higher-level cognitive brain:
-- **Selective Escalation:** Gemma is invoked when the user confides a worry, asks for guidance, or when Mochi escalates a long-session break check-in.
-- **Physical Pre-Speech Sequence:** Before speaking, Mochi approaches, pauses, tilts its head, and breathes, ensuring natural creature presence.
-- **Cognitive Restructuring:** Gemma analyzes automatic negative thoughts, identifies underlying cognitive distortions, tests evidence vs. emotional fears, and generates:
-  1. A compassionate friend perspective.
-  2. An objective factual reframe.
-  3. A somatic micro-grounding action.
+Open innovation and open-weight models like **Google Gemma** made Sanctuary possible in ways proprietary closed APIs never could:
+
+1. **Uncompromised Mental Health Privacy:** Closed AI APIs require sending sensitive, vulnerable late-night anxieties to third-party servers. With Gemma running in-browser via WebGPU / WebLLM or locally via Ollama, **zero bytes of personal thoughts ever leave the user's computer**.
+2. **Zero Operating Costs & High Availability:** Traditional mental health apps struggle with per-token API fees or server outages. Open weights allow Sanctuary to run indefinitely, for free, even completely offline during travel or internet outages.
+3. **Predictable Local Latency:** Running on-device means no network throttling or queue times when a friend needs immediate emotional grounding.
 
 ---
 
-## Technical Architecture
+## My Agent Session
 
-```mermaid
-graph TD
-    A[Workspace Context: Cursor, Keyboard, Focus] --> B[BrowserContextProvider]
-    B -->|Context Events| C[MochiLifeEngine 20Hz Loop]
-    C --> D{Priority & Interruption Check}
-    D -->|Local Action| E[Loaf, Stretch, Nap, Purr, Eye Gaze]
-    D -->|Cognitive Escalation| F[Physical Pre-Speech Sequence]
-    F --> G[Google Gemma Open-Weight Model]
-    G --> H[CBT Validation + Reframe + Somatic Cue]
-    H --> I[ElevenLabs Soothing AI Voice]
-    H --> J[Zero-Knowledge Local Vault]
-```
-
----
-
-## Local AI Inference Tiers
-
-1. **Tier 1 (Hero / In-Browser WebGPU):** `@mlc-ai/web-llm` running `gemma-2-2b-it-q4f16_1-MLC` natively on the user's GPU. 0 Bytes sent to any server.
-2. **Tier 2 (Desktop Localhost):** Ollama endpoint at `http://localhost:11434` running `gemma2:2b`.
-3. **Tier 3 (Cloud Fallback):** Optional Hugging Face Serverless API with user-provided key.
-
----
-
-## Voice Synthesis
-
-- **Primary:** ElevenLabs Text-to-Speech API with streaming playback and ultra-low latency voice personas (*Rachel*, *Sarah*, *Charlie*, *Daniel*).
-- **Fallback:** Device Native Web Speech API for 100% offline, zero-configuration voice.
-
----
-
-## Privacy & Open Source Setup
-
-- **Zero-Knowledge Privacy:** 100% client-side execution; reflections are stored strictly in browser `localStorage`.
-- **Zero Hardcoded Secrets:** No API keys or credentials exist in the codebase.
-- **Built-in Diagnostic Suite:** Users and judges can verify live inference, context injection, and privacy compliance by clicking the **Brain: Gemma** status badge in the header or running `window.runGemmaDiagnostics()` in DevTools.
+This project was conceived, designed, and built in an intensive pair-programming session with an autonomous AI coding agent. The architecture, state machines, WebGPU WebLLM integration, and Document PiP companion surface were iteratively scaffolded, tested, and audited for zero secret leaks.
 
 ---
 
 ## Prize Categories
 
-- **Best Use of Gemma:** Google's open-weight Gemma model powers the on-device CBT cognitive reasoning and contextual reflection pipeline.
-- **Best Use of ElevenLabs:** Lifelike, emotive voice synthesis powers soothing roommate check-ins and guided grounding audio.
+- **Best Use of Gemma:** Google's open-weight Gemma model powers the 100% on-device CBT cognitive restructuring pipeline and contextual friend reflections.
+- **Best Use of ElevenLabs:** Emotive, lifelike voice synthesis powered by ElevenLabs Flash v2.5 provides soothing roommate check-ins and empathetic audio comfort.
